@@ -39,6 +39,15 @@ app.get("/", (req, res) => res.send(database.users));
 
 
 app.post('/signin', (req, res) => {
+    bcrypt.compare("pizookies", '$2a$10$5nNDC7DkIgHbFmu2plYc4u1H9x4Ov9U03ZRjQ4sXuNcY1R92zPjgu', function (err, res) {
+        console.log('first guess', res);
+        // res == true
+    });
+    bcrypt.compare("veggies", '$2a$10$5nNDC7DkIgHbFmu2plYc4u1H9x4Ov9U03ZRjQ4sXuNcY1R92zPjgu', function (err, res) {
+        console.log('second guess', res);
+        // res = false
+    });
+
     if (req.body.email === database.users[0].email &&
         req.body.password === database.users[0].password) {
         res.json('success');
@@ -52,19 +61,17 @@ app.post('/signin', (req, res) => {
 
 app.post('/register', (req, res) => {
     const { email, name, password } = req.body;
-    bcrypt.hash(password, null, null, function (err, hash) {
-        console.log(hash);
-    });
-    database.users.push({
-        id: '125',
-        name: name,
-        email: email,
-        password: password,
-        entries: 0,
-        joined: new Date()
-    })
-    res.json(database.users[database.users.length - 1]);
+});
+database.users.push({
+    id: '125',
+    name: name,
+    email: email,
+    password: password,
+    entries: 0,
+    joined: new Date()
 })
+res.json(database.users[database.users.length - 1]);
+
 
 
 app.get('/profile/:id', (req, res) => {
@@ -98,15 +105,6 @@ app.post('/image', (req, res) => {
 
 
 
-// Load hash from your password DB.
-/*
-bcrypt.compare("bacon", hash, function (err, res) {
-    // res == true
-});
-bcrypt.compare("veggies", hash, function (err, res) {
-    // res = false
-});
-*/
 
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
