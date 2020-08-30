@@ -1,9 +1,6 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const bcrypt = require('bcyrptjs');
-const cors = require('cors');
-const knex = require('knex');
 const port = process.env.PORT || 3001;
 
 
@@ -35,7 +32,13 @@ const database = {
 app.get("/", (req, res) => res.send("server is working!"));
 
 app.post('/signin', (req, res) => {
-    res.json("signin")
+    if (req.body.email === database.users[0].email &&
+        req.body.password === database.users[0].password) {
+        res.json('success');
+    } else {
+        res.status(400).json('error loggin in');
+        res.json('signin')
+    }
 })
 
 
