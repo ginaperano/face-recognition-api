@@ -29,18 +29,35 @@ const database = {
     ]
 }
 
-app.get("/", (req, res) => res.send("server is working!"));
+app.get("/", (req, res) => res.send(database.users));
 
+// Success
+// Cannot GET /signin error message on localhost
 app.post('/signin', (req, res) => {
     if (req.body.email === database.users[0].email &&
         req.body.password === database.users[0].password) {
         res.json('success');
     } else {
-        res.status(400).json('error loggin in');
+        res.status(400).json('error logging in');
         res.json('signin')
     }
 })
 
+// New User Data
+// Cannot GET /register error message on localhost
+
+app.post('/register', (req, res) => {
+    const { email, name, password } = req.body;
+    database.users.push({
+        id: '125',
+        name: name,
+        email: email,
+        password: password,
+        entries: 0,
+        joined: new Date()
+    })
+    res.json(database.users[database.users.length - 1]);
+})
 
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
