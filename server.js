@@ -2,18 +2,21 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
+const cors = require('cors');
 const port = process.env.PORT || 3001;
 
 
 const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cors())
 
 const database = {
     users: [
         {
             id: '123',
             name: 'John',
+            password: 'cookies',
             email: 'john@gmail.com',
             entries: 0,
             joined: new Date()
@@ -21,16 +24,10 @@ const database = {
         {
             id: '124',
             name: 'Sally',
+            password: 'bananas',
             email: 'sally@gmail.com',
             entries: 0,
             joined: new Date()
-        }
-    ],
-    login: [
-        {
-            id: '987',
-            hash: '',
-            email: 'john@gmail.com'
         }
     ]
 }
@@ -39,39 +36,27 @@ app.get("/", (req, res) => res.send(database.users));
 
 
 app.post('/signin', (req, res) => {
-    bcrypt.compare("pizookies", '$2a$10$5nNDC7DkIgHbFmu2plYc4u1H9x4Ov9U03ZRjQ4sXuNcY1R92zPjgu', function (err, res) {
-        console.log('first guess', res);
-        // res == true
-    });
-    bcrypt.compare("veggies", '$2a$10$5nNDC7DkIgHbFmu2plYc4u1H9x4Ov9U03ZRjQ4sXuNcY1R92zPjgu', function (err, res) {
-        console.log('second guess', res);
-        // res = false
-    });
-
     if (req.body.email === database.users[0].email &&
         req.body.password === database.users[0].password) {
         res.json('success');
     } else {
         res.status(400).json('error logging in');
-        res.json('signin')
     }
 })
 
 
-
 app.post('/register', (req, res) => {
     const { email, name, password } = req.body;
-});
-database.users.push({
-    id: '125',
-    name: name,
-    email: email,
-    password: password,
-    entries: 0,
-    joined: new Date()
+    database.users.push({
+        id: '125',
+        name: name,
+        email: email,
+        password: password,
+        entries: 0,
+        joined: new Date()
+    })
+    res.json(database.users[database.users.length - 1]);
 })
-res.json(database.users[database.users.length - 1]);
-
 
 
 app.get('/profile/:id', (req, res) => {
@@ -102,8 +87,6 @@ app.post('/image', (req, res) => {
         res.status(400).json('not found');
     }
 })
-
-
 
 
 
