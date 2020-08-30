@@ -1,6 +1,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt-nodejs');
 const port = process.env.PORT || 3001;
 
 
@@ -14,7 +15,6 @@ const database = {
             id: '123',
             name: 'John',
             email: 'john@gmail.com',
-            password: 'cookies',
             entries: 0,
             joined: new Date()
         },
@@ -22,17 +22,22 @@ const database = {
             id: '124',
             name: 'Sally',
             email: 'sally@gmail.com',
-            password: 'bananas',
             entries: 0,
             joined: new Date()
+        }
+    ],
+    login: [
+        {
+            id: '987',
+            hash: '',
+            email: 'john@gmail.com'
         }
     ]
 }
 
 app.get("/", (req, res) => res.send(database.users));
 
-// Success
-// Cannot GET /signin error message on localhost
+
 app.post('/signin', (req, res) => {
     if (req.body.email === database.users[0].email &&
         req.body.password === database.users[0].password) {
@@ -43,8 +48,7 @@ app.post('/signin', (req, res) => {
     }
 })
 
-// New User Data
-// Cannot GET /register error message on localhost
+
 
 app.post('/register', (req, res) => {
     const { email, name, password } = req.body;
@@ -59,7 +63,7 @@ app.post('/register', (req, res) => {
     res.json(database.users[database.users.length - 1]);
 })
 
-// get user is working
+
 app.get('/profile/:id', (req, res) => {
     const { id } = req.params;
     let found = false;
@@ -89,10 +93,19 @@ app.post('/image', (req, res) => {
     }
 })
 
+bcrypt.hash(password, null, null, function (err, hash) {
+    console.log(hash);
+    // Store hash in your password DB.
+});
+
+// Load hash from your password DB.
+bcrypt.compare("bacon", hash, function (err, res) {
+    // res == true
+});
+bcrypt.compare("veggies", hash, function (err, res) {
+    // res = false
+});
+
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
 
-
-/*
-/ image --> PUT --> user
-*/
