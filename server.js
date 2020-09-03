@@ -10,9 +10,6 @@ const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 
-
-
-
 const db = knex({
     client: 'pg',
     connection: {
