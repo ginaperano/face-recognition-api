@@ -8,6 +8,8 @@ const knex = require('knex');
 
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
+const profile = require('./controllers/profile');
+
 
 
 
@@ -28,26 +30,9 @@ app.use(express.json());
 app.use(cors())
 
 app.get("/", (req, res) => { res.send(db.users) })
-
 app.post('/signin', signin.handleSignin(db, bcrypt))
-
-
 app.post('/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) })
-
-
-app.get('/profile/:id', (req, res) => {
-    const { id } = req.params;
-    db.select('*').from('users').where({ id })
-        .then(user => {
-            if (user.length) {
-                res.json(user[0])
-            } else {
-                res.status(400).json('Not found')
-            }
-        })
-        .catch(err => res.status(400).json('error getting user'))
-})
-
+app.get('/profile/:id', (req, res) => { profile.handleProfileGet(req, res, db) })
 
 app.put('/image', (req, res) => {
     const { id } = req.body;
@@ -59,8 +44,6 @@ app.put('/image', (req, res) => {
         })
         .catch(err => res.status(400).json('unable to get entries'))
 })
-
-
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
 
